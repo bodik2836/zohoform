@@ -4,12 +4,12 @@ const routes = [
     {
         path: '/',
         name: 'home',
-        component: () => import('../components/zohoform/Index.vue')
+        component: () => import('../components/zoho/form/Index.vue')
     },
     {
         path: '/zoho/form',
         name: 'zoho.form.index',
-        component: () => import('../components/zohoform/Index.vue')
+        component: () => import('../components/zoho/form/Index.vue')
     },
 ];
 
