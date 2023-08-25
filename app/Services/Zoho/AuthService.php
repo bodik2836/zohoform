@@ -25,7 +25,7 @@ class AuthService
         $this->redirectUri = env('APP_URL') . '/oauthredirect/';
     }
 
-    public function makeRequest(string $method, string $uri, array $options = []): array
+    public function makeRequest(string $method, string $uri, array $options = [])
     {
         $accessToken = $this->getToken('zoho_access_token');
 
@@ -34,7 +34,7 @@ class AuthService
         ];
 
         if (!$accessToken) {
-            $this->refreshToken();
+            return $this->refreshToken();
         }
 
         $response = null;
@@ -84,7 +84,23 @@ class AuthService
         $this->setToken('zoho_refresh_token', $tokens['refresh_token']);
     }
 
-    public function refreshToken(): array
+    public function refreshToken()
+    {
+        $response = $this->makeRefreshTokenRequest();
+
+        $responseData = json_decode($response->getBody()->getContents(), true);
+
+        if (isset($responseData['error'])) return $responseData;
+
+        $this->setToken('zoho_access_token', $responseData['access_token']);
+
+        return $responseData;
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function makeRefreshTokenRequest()
     {
         $refreshToken = $this->getToken('zoho_refresh_token');
 
@@ -92,26 +108,17 @@ class AuthService
             Redirect::route('zoho.auth')->send();
         }
 
-        $response = null;
-        try {
-            $response = $this->httpClient->request('POST', "$this->zohoOauthUri/token", [
-                'form_params' => [
-                    'refresh_token' => $refreshToken,
-                    'client_id' => $this->zohoClientId,
-                    'grant_type' => 'refresh_token',
-                    'client_secret' => $this->zohoClientSecret,
-                ],
-            ]);
-        } catch (GuzzleException $e) {
-            if ($e->getCode() != 200) Redirect::route('zoho.auth')->send();
-        }
-        $responseData = json_decode($response->getBody()->getContents(), true);
-
-        if (isset($responseData['error'])) Redirect::route('zoho.auth')->send();
-
-        $this->setToken('zoho_access_token', $responseData['access_token']);
-
-        return $responseData;
+        return $this->httpClient->request('POST', "$this->zohoOauthUri/token", [
+            'headers' => [
+                'Accept' => 'application/json'
+            ],
+            'form_params' => [
+                'refresh_token' => $refreshToken,
+                'client_id' => $this->zohoClientId,
+                'grant_type' => 'refresh_token',
+                'client_secret' => $this->zohoClientSecret,
+            ],
+        ]);
     }
 
     public function getToken(string $tokenName): ?string

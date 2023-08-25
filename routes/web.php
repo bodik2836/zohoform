@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Zoho\AuthController as ZohoAuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/zoho/auth', [ZohoAuthController::class, 'auth'])->name('zoho.auth');
+Route::get('/oauthredirect', [ZohoAuthController::class, 'oauthredirect'])->name('zoho.oauthredirect');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/{any?}', 'layouts.default')->where('any', '.*')->name('home');

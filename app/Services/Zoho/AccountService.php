@@ -52,7 +52,24 @@ class AccountService
         ];
 
         $responseData = $this->zohoAuthService->makeRequest('POST', $uri, $options);
+        $data = $responseData['data'][0] ?? [];
 
-        return $responseData['data'][0];
+        if (isset($data['status']) && $data['status'] == 'success') $data['successMessage'] = 'Account successfully created.';
+        if (isset($data['status']) && $data['status'] == 'error') $data['errorMessage'] = 'Account was not created.';
+        if (empty($data)) {
+            $data['status'] = 'error';
+            $data['errorMessage'] = 'Something went wrong with account creation.';
+        }
+
+        return $data;
+    }
+
+    public function prepareAccountData($data): array
+    {
+        return [
+            'Account_Name' => $data['Account_Name'] ?? '',
+            'Phone' => $data['Phone'] ?? '',
+            'Website' => $data['Website'] ?? '',
+        ];
     }
 }

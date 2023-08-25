@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Zoho\FormController as ZohoFormController;
+use App\Http\Controllers\Zoho\Settings\DealStagesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +19,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/zoho/form', [ZohoFormController::class, 'store'])->name('zoho.form.store');
+Route::get('/zoho/settings/deal-stages', [DealStagesController::class, 'index']);
