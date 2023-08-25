@@ -1,7 +1,7 @@
 <script>
 import {onMounted, reactive} from "vue";
-import useZohoForm from '../../../composables/zoho_form.js';
-import useDealStages from '../../../composables/deal_stages.js';
+import useZohoForm from '@/composables/zoho_form.js';
+import useDealStages from '@/composables/deal_stages.js';
 
 export default {
     setup() {
