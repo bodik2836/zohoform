@@ -12,14 +12,16 @@ class DealService
         protected ZohoAuthService $zohoAuthService
     ) {}
 
-    public function getDealStages(): array
+    public function getDealStages()
     {
         $uri = 'https://www.zohoapis.eu/crm/v2/settings/stages?module=Deals';
 
-        $responseData = $this->zohoAuthService->makeRequest('GET', $uri);
+        $response = $this->zohoAuthService->makeRequest('GET', $uri);
+        $responseData = json_decode($response->content(), true);
 
         if (isset($responseData['access_token'])) {
-            $responseData = $this->zohoAuthService->makeRequest('GET', $uri);
+            $response = $this->zohoAuthService->makeRequest('GET', $uri);
+            $responseData = json_decode($response->content(), true);
         }
 
         return $responseData['stages'] ?? [];

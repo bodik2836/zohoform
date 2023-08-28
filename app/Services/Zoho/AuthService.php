@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Psr\Http\Message\ResponseInterface;
 
 class AuthService
 {
@@ -46,7 +47,7 @@ class AuthService
             }
         }
 
-        return json_decode($response->getBody()->getContents(), true);
+        return response($response->getBody()->getContents(), $response->getStatusCode());
     }
 
     public function getAuthUri(): string
@@ -84,6 +85,9 @@ class AuthService
         $this->setToken('zoho_refresh_token', $tokens['refresh_token']);
     }
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function refreshToken()
     {
         $response = $this->makeRefreshTokenRequest();
@@ -100,13 +104,9 @@ class AuthService
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function makeRefreshTokenRequest()
+    public function makeRefreshTokenRequest(): ResponseInterface
     {
         $refreshToken = $this->getToken('zoho_refresh_token');
-
-        if (!$refreshToken) {
-            Redirect::route('zoho.auth')->send();
-        }
 
         return $this->httpClient->request('POST', "$this->zohoOauthUri/token", [
             'headers' => [
