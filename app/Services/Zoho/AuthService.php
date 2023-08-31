@@ -7,7 +7,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-use Psr\Http\Message\ResponseInterface;
 
 class AuthService
 {
@@ -92,23 +91,23 @@ class AuthService
     {
         $response = $this->makeRefreshTokenRequest();
 
-        $responseData = json_decode($response->getBody()->getContents(), true);
+        $responseData = json_decode($response->content(), true);
 
-        if (isset($responseData['error'])) return $responseData;
+        if (isset($responseData['error'])) return $response;
 
         $this->setToken('zoho_access_token', $responseData['access_token']);
 
-        return $responseData;
+        return $response;
     }
 
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function makeRefreshTokenRequest(): ResponseInterface
+    public function makeRefreshTokenRequest()
     {
         $refreshToken = $this->getToken('zoho_refresh_token');
 
-        return $this->httpClient->request('POST', "$this->zohoOauthUri/token", [
+        $response = $this->httpClient->request('POST', "$this->zohoOauthUri/token", [
             'headers' => [
                 'Accept' => 'application/json'
             ],
@@ -119,6 +118,8 @@ class AuthService
                 'client_secret' => $this->zohoClientSecret,
             ],
         ]);
+
+        return response($response->getBody()->getContents(), $response->getStatusCode());
     }
 
     public function getToken(string $tokenName): ?string

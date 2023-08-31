@@ -21,10 +21,9 @@ class DealService
 
         if (isset($responseData['access_token'])) {
             $response = $this->zohoAuthService->makeRequest('GET', $uri);
-            $responseData = json_decode($response->content(), true);
         }
 
-        return $responseData['stages'] ?? [];
+        return $response->content();
     }
 
     public function storeDeal($data)
