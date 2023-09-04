@@ -13,15 +13,13 @@ export default function useZohoForm() {
         let baseUri = window.location.origin;
         try {
             let response = await axios.post(baseUri + '/api/zoho/form', data);
-            console.log(response);
+
             notifications.value = response.data;
+
             await router.push({ name: 'zoho.form.index' });
         } catch (e) {
             if (e.response.status === 422) {
                 notifications.value = e.response.data.errors;
-            }
-            if (e.response.status === 500) {
-                console.log(e.response.data);
             }
         }
 

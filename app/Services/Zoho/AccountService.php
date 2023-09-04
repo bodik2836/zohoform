@@ -11,34 +11,7 @@ class AccountService
     public function __construct(
         protected Client $httpClient,
         protected AuthService $zohoAuthService
-    ) {
-    }
-
-    public function getAccounts()
-    {
-        $accessToken = $this->zohoAuthService->getToken('zoho_access_token');
-
-        if (!$accessToken) {
-            $this->zohoAuthService->refreshToken();
-        }
-
-        $response = null;
-
-        try {
-            $response = $this->httpClient->request('GET', "https://www.zohoapis.eu/crm/v2/Accounts", [
-                'headers' => [
-                    'Authorization' => "Zoho-oauthtoken $accessToken",
-                ],
-            ]);
-        } catch (GuzzleException $e) {
-            if ($e->getCode() == 401) {
-                $this->zohoAuthService->refreshToken();
-                Redirect::refresh()->send();
-            }
-        }
-
-        return json_decode($response?->getBody()?->getContents(), true);
-    }
+    ) {}
 
     public function storeAccount($data)
     {
@@ -51,17 +24,20 @@ class AccountService
             ]
         ];
 
-        $responseData = $this->zohoAuthService->makeRequest('POST', $uri, $options);
-        $data = $responseData['data'][0] ?? [];
+        $response = $this->zohoAuthService->makeRequest('POST', $uri, $options);
+        $responseData = json_decode($response->content(), true);
 
-        if (isset($data['status']) && $data['status'] == 'success') $data['successMessage'] = 'Account successfully created.';
-        if (isset($data['status']) && $data['status'] == 'error') $data['errorMessage'] = 'Account was not created.';
-        if (empty($data)) {
-            $data['status'] = 'error';
-            $data['errorMessage'] = 'Something went wrong with account creation.';
+        if (isset($responseData['data']) && $responseData['data'][0]['status'] == 'error') {
+            $responseData['data'][0]['message'] = 'Account was not created.';
         }
 
-        return $data;
+        if (isset($responseData['data']) && $responseData['data'][0]['status'] == 'success') {
+            $responseData['data'][0]['message'] = 'Account successfully created.';
+        }
+
+        $response->setContent($responseData);
+
+        return $response->content();
     }
 
     public function prepareAccountData($data): array

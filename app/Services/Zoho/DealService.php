@@ -37,16 +37,20 @@ class DealService
             ]
         ];
 
-        $responseData = $this->zohoAuthService->makeRequest('POST', $uri, $options);
-        $data = $responseData['data'][0] ?? [];
+        $response = $this->zohoAuthService->makeRequest('POST', $uri, $options);
+        $responseData = json_decode($response->content(), true);
 
-        if (isset($data['status']) && $data['status'] == 'success') $data['successMessage'] = 'Deal successfully created.';
-        if (isset($data['status']) && $data['status'] == 'error') $data['errorMessage'] = 'Deal was not created.';
-        if (empty($data)) {
-            $data['status'] = 'error';
-            $data['errorMessage'] = 'Something went wrong with deal creation.';
+        if (isset($responseData['data']) && $responseData['data'][0]['status'] == 'error') {
+            $responseData['data'][0]['message'] = 'Deal was not created.';
         }
-        return $data;
+
+        if (isset($responseData['data']) && $responseData['data'][0]['status'] == 'success') {
+            $responseData['data'][0]['message'] = 'Deal successfully created.';
+        }
+
+        $response->setContent($responseData);
+
+        return $response->content();
     }
 
     public function prepareDealData($data): array

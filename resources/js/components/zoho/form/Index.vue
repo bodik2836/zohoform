@@ -57,13 +57,13 @@ export default {
         <template v-if="notifications">
             <template v-for="item in notifications">
                 <div v-if="item.status === 'success'" class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ item.successMessage }}
+                    {{ item.message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </template>
             <template v-for="item in notifications">
                 <div v-if="item.status === 'error'" class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ item.errorMessage }}
+                    {{ item.message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </template>
@@ -91,7 +91,7 @@ export default {
                                                 name="Account_Name"
                                                 id="Account_Name"
                                                 v-model="form.Account_Name"
-                                                @focus="clearError('Account_Name')"
+                                                @focusout="clearError('Account_Name')"
                                             >
                                             <span v-if="notifications"
                                                   class="text-danger"
@@ -109,7 +109,7 @@ export default {
                                                 name="Phone"
                                                 id="Phone"
                                                 v-model="form.Phone"
-                                                @focus="clearError('Phone')"
+                                                @focusout="clearError('Phone')"
                                             >
                                             <span v-if="notifications"
                                                   class="text-danger"
@@ -127,7 +127,7 @@ export default {
                                                 name="Website"
                                                 id="Website"
                                                 v-model="form.Website"
-                                                @focus="clearError('Website')"
+                                                @focusout="clearError('Website')"
                                             >
                                             <span v-if="notifications"
                                                   class="text-danger"
@@ -147,7 +147,7 @@ export default {
                                                 name="Deal_Name"
                                                 id="Deal_Name"
                                                 v-model="form.Deal_Name"
-                                                @focus="clearError('Deal_Name')"
+                                                @focusout="clearError('Deal_Name')"
                                             >
                                             <span v-if="notifications"
                                                   class="text-danger"
@@ -161,7 +161,7 @@ export default {
                                             Deal Stage <span class="text-danger">*</span>
                                         </label>
                                         <div class="col-sm-9">
-                                            <select class="form-select" name="Stage" id="Stage" v-model="form.Stage" @focus="clearError('Stage')">
+                                            <select class="form-select" name="Stage" id="Stage" v-model="form.Stage" @focusout="clearError('Stage')">
                                                 <option disabled value="">--- select stage ----</option>
                                                 <option
                                                     v-for="item in dealStages"
@@ -189,7 +189,7 @@ export default {
                                                 name="Closing_Date"
                                                 id="Closing_Date"
                                                 v-model="form.Closing_Date"
-                                                @focus="clearError('Closing_Date')"
+                                                @focusout="clearError('Closing_Date')"
                                             >
                                             <span v-if="notifications"
                                                   class="text-danger"
