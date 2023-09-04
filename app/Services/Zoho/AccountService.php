@@ -3,8 +3,6 @@
 namespace App\Services\Zoho;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Support\Facades\Redirect;
 
 class AccountService
 {
