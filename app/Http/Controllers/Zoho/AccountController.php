@@ -11,21 +11,7 @@ class AccountController extends Controller
 {
     public function __construct(
         protected ZohoAccountService $zohoAccountService,
-    ) {
-    }
-
-    public function index(Request $request)
-    {
-        $accounts = $this->zohoAccountService->getAccounts();
-
-        return view('accounts.index');
-//        return redirect()->route('zoho.accounts');
-    }
-
-    public function create()
-    {
-        return view('accounts.create');
-    }
+    ) {}
 
     public function store(StoreRequest $request)
     {
