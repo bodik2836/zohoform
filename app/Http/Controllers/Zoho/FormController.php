@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Zoho\Form\StoreRequest;
 use App\Services\Zoho\AccountService as ZohoAccountService;
 use App\Services\Zoho\DealService as ZohoDealService;
+use Inertia\Inertia;
 
 class FormController extends Controller
 {
@@ -13,6 +14,11 @@ class FormController extends Controller
         protected ZohoAccountService $zohoAccountService,
         protected ZohoDealService $zohoDealService
     ) {}
+
+    public function index()
+    {
+        return Inertia::render("zoho/form/Index");
+    }
 
     public function store(StoreRequest $request)
     {

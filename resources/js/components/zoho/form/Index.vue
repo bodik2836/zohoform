@@ -52,6 +52,7 @@ export default {
 </script>
 
 <template>
+    <div id="app"></div>
 <div class="container">
     <div class="mb-3">
         <template v-if="notifications">

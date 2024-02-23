@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Zoho\AuthController as ZohoAuthController;
+use App\Http\Controllers\Zoho\FormController as ZohoFormController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,4 +17,4 @@ use Illuminate\Support\Facades\Route;
 Route::get('/zoho/auth', [ZohoAuthController::class, 'auth'])->name('zoho.auth');
 Route::get('/oauthredirect', [ZohoAuthController::class, 'oauthredirect'])->name('zoho.oauthredirect');
 
-Route::view('/{any?}', 'layouts.default')->where('any', '.*')->name('home');
+Route::get('/', [ZohoFormController::class, 'index'])->name('home');
